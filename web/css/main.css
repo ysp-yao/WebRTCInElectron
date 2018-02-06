@@ -1,9 +1,19 @@
 body {
     font-family: sans-serif;
   }
-  
+  /*
+  video {
+    -webkit-filter: blur(4px) invert(1) opacity(0.5);
+  }
+  */
+  /*
+  video {
+    filter: hue-rotate(180deg) saturate(200%);
+    -moz-filter: hue-rotate(180deg) saturate(200%);
+    -webkit-filter: hue-rotate(180deg) saturate(200%);
+  }
+  */
   video {
     max-width: 100%;
     width: 320px;
   }
-  
