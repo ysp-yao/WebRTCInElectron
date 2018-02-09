@@ -11,16 +11,18 @@
 
 <body>
 
+  <input id="ws_addr" type="text" value="ws://localhost:8181">
+  <button id="ConnetToServer">ConnetToServer</button>
+  <div>
+      <button id="Call">Call</button>
+  </div>
+
   <h1>WebRTC in Eletron</h1>
   
   <video id="localVideo" autoplay playsinline></video>
   <video id="remoteVideo" autoplay playsinline></video>
 
-  <div>
-    <button id="startButton">Start</button>
-    <button id="callButton">Call</button>
-    <button id="hangupButton">Hang Up</button>
-  </div>
+
 
   <!--这是一段注释。注释不会在浏览器中显示。-->
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
