@@ -4,7 +4,7 @@
 
 var pc = null;
 var localStream;
-var dataConstraint;
+var dataConstraint = null;
 var sendChannel;
 
 /* 
@@ -89,15 +89,21 @@ class Rtcsdk {
       });
   }
 
-  CreateOffer(servers, offerOptions) {
+  CreateOffer(servers, offerOptions, is_datachannel) {
     console.log("CreateOffer");
 
     window.pc = pc = new RTCPeerConnection(servers);
   
-    //sendChannel = pc.createDataChannel('sendDataChannel', dataConstraint);
+    if (is_datachannel) {
+      sendChannel = pc.createDataChannel('sendDataChannel', dataConstraint);
   
-    //sendChannel.onopen = onSendChannelStateChange;
-    //pc.onaddstream = _get_remote_stream;
+      sendChannel.onopen = function(event) {
+        console.log('Hi you!');
+      }
+      sendChannel.onmessage = function(event) {
+        console.log("====================");
+      }
+    }
 
 
     pc.onicecandidate = function(e) {
@@ -116,16 +122,29 @@ class Rtcsdk {
     pc.addStream(localStream);
   
     pc.createOffer(
+      offerOptions
     ).then(
       _onCreateOfferSuccess,
       _onCreateSessionDescriptionError
     );
   }
 
-  CreateAnswer(servers, remote_sdp) {
+  CreateAnswer(servers, remote_sdp, is_datachannel) {
     console.log("CreateAnswer");
 
     window.pc = pc = new RTCPeerConnection(servers);
+
+    if (is_datachannel) {
+      pc.ondatachannel = function(e) {
+        sendChannel = event.channel;
+        sendChannel.onopen = function(event) {
+          console.log('Hi you!');
+        }
+        sendChannel.onmessage = function(event) {
+          console.log("====================");
+        }
+      }
+    }
 
     pc.onicecandidate = function(e) {
       _onIceCandidate(pc, e);
@@ -137,6 +156,7 @@ class Rtcsdk {
     pc.onaddstream = _get_remote_stream;
 
     pc.addStream(localStream);
+
 
     pc.setRemoteDescription(new RTCSessionDescription({type:"offer",sdp:remote_sdp})).then(
       function() {
@@ -160,18 +180,6 @@ class Rtcsdk {
         },
         _onSetSessionDescriptionError
       );
-
-   /*
-   pc.setRemoteDescription({type:"answer",sdp:remote_sdp}, () => {
-    console.log('setRemoteDescripton success!!!');
-    pc.onaddstream = (event) => {
-        window.remoteStream = remoteVideo.srcObject = event.stream;
-    };
-  }, (err) => {
-    console.log(err);
-  });
-  */
-
   }
 
   addIceCandidate(remote_ice) {
@@ -186,4 +194,9 @@ class Rtcsdk {
         }
     );
   }
+
+  SendData() {
+    sendChannel.send("this is webrtc datachannel");
+  }
+
 }

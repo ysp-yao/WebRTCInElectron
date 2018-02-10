@@ -6,6 +6,10 @@ var CallButton = document.getElementById('Call');
 CallButton.onclick = Call;
 var ConnetToServerButton = document.getElementById('ConnetToServer');
 ConnetToServerButton.onclick = ConnetToServer;
+var SendDataButton = document.getElementById('SendData');
+SendDataButton.onclick = SendData;
+
+
 var localVideo = document.getElementById('localVideo');
 var remoteVideo = document.getElementById('remoteVideo');
 
@@ -18,13 +22,12 @@ var is_first_msg = true;
 
 var constraints = {
   audio: false,
-  /*
   video: {
       mandatory: {
           chromeMediaSource: 'desktop',
       }
-  }*/
-  video:true
+  }
+  //video:true
 };
 var rtcsdk = new Rtcsdk(constraints);
 var ws;
@@ -59,7 +62,7 @@ function onMessage(evt) {
   if (is_first_msg) {
     is_first_msg = false;
     if (!is_offer)
-      rtcsdk.CreateAnswer(servers, evt.data);
+      rtcsdk.CreateAnswer(servers, evt.data, true);
     else
       rtcsdk.SetRemoteSDP(evt.data);
   }
@@ -73,10 +76,10 @@ function Call() {
   CallButton.disabled = true;
 
   let offerOptions = {
-    offerToReceiveAudio: 1,
-    offerToReceiveVideo: 1
+    offerToReceiveAudio: 0,
+    offerToReceiveVideo: 0
   };
-  rtcsdk.CreateOffer(servers, offerOptions);
+  rtcsdk.CreateOffer(servers, offerOptions, true);
 }
 
 function trace(text) {
@@ -89,5 +92,9 @@ function trace(text) {
   } else {
     console.log(text);
   }
+}
+
+function SendData() {
+  rtcsdk.SendData();
 }
 
